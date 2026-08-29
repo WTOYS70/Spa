@@ -60,9 +60,10 @@ contact.html               Coordonnées, horaires, plan, formulaire
 mentions-legales.html      Mentions légales et confidentialité
 404.html                   Page d'erreur
 
-assets/css/style.css       Feuille de style unique (~48 Ko)
-assets/js/main.js          Interactions (~16 Ko)
+assets/css/style.css       Feuille de style unique (~49 Ko)
+assets/js/main.js          Interactions (~14 Ko)
 assets/img/                Logo, favicon, illustrations SVG, image de partage
+assets/fonts/              Polices auto-hébergées + licences SIL OFL (~71 Ko)
 
 robots.txt  sitemap.xml  site.webmanifest
 ```
@@ -105,18 +106,48 @@ dans `contact.html`.
 
 ### Les polices
 
-Chargées depuis Google Fonts. **En France, la CNIL considère cet appel comme un
-transfert de données vers un tiers.** Pour être tranquille, télécharger les deux
-polices (Cormorant Garamond et Manrope), les déposer dans `assets/fonts/`, et
-remplacer le `<link>` par une déclaration `@font-face` locale. Le site reste
-lisible sans elles : une pile de repli est prévue.
+**Auto-hébergées dans `assets/fonts/`.** Aucun appel à Google Fonts ni à aucun
+autre service : le site ne transmet donc aucune donnée de visiteur à un tiers,
+ce que la CNIL attend.
+
+| Fichier | Rôle | Poids |
+|---|---|---|
+| `manrope-variable.woff2` | Texte courant, graisses 200 à 800 | 24 Ko |
+| `cormorant-garamond-400.woff2` | Titres | 22 Ko |
+| `cormorant-garamond-400-italic.woff2` | Citations en encart | 23 Ko |
+
+Les deux familles sont sous licence **SIL Open Font License**, qui autorise
+explicitement cette redistribution. Les licences sont dans `assets/fonts/`
+et doivent y rester.
+
+Trois choix expliquent la légèreté de l'ensemble :
+
+- **Sous-ensemble latin uniquement.** Il couvre tout le français, accents,
+  ligature œ et guillemets compris. Un caractère hors plage retombe
+  proprement sur la police système.
+- **Manrope en fonte variable.** Un seul fichier fournit les cinq graisses
+  utilisées, au lieu de cinq téléchargements.
+- **Cormorant en 400 seulement.** C'est la seule graisse employée. Les deux
+  `<b>` qui utilisent cette police sont forcés en 400 dans la CSS, sinon le
+  navigateur fabriquerait un faux gras disgracieux sur une serif de titrage.
+
+Les deux polices du haut de page sont préchargées (`rel="preload"`), et
+`font-display: swap` affiche le texte immédiatement en police de repli.
+
+**Si vous changez de police :** garder la pile de repli complète dans la
+propriété `font-family`, et ajuster le `<link rel="preload">` de chaque page.
+Ajouter une graisse suppose d'ajouter le fichier correspondant, faute de quoi
+le navigateur la synthétisera.
 
 ---
 
 ## Ce qui a été mis en place
 
-**Performance.** Aucune bibliothèque externe. Le CSS est chargé en bloquant
-(48 Ko), les polices en différé, le JavaScript en `defer`. Les images sont des SVG
+**Performance.** Aucune bibliothèque externe, aucune requête vers un domaine
+tiers. Chemin critique du premier affichage : **≈ 139 Ko non compressés**, soit
+environ 60 Ko une fois servis en gzip ou brotli (les `.woff2` sont déjà
+compressés). Le CSS est chargé en bloquant (49 Ko), les polices préchargées
+depuis le même domaine, le JavaScript en `defer`. Les images sont des SVG
 inline-friendly. L'animation de vapeur s'arrête dès que le héros sort de l'écran
 ou que l'onglet passe en arrière-plan.
 
@@ -130,8 +161,10 @@ de 112 à 140 caractères, un seul `h1` par page, hiérarchie de titres sans sau
 lien d'évitement, contrastes vérifiés sur les deux thèmes, et respect de
 `prefers-reduced-motion` : toutes les animations se coupent si le système le demande.
 
-**Vie privée.** Aucun cookie, aucun traceur, aucune mesure d'audience. La carte
-Google ne se charge qu'après un clic explicite du visiteur.
+**Vie privée.** Aucun cookie, aucun traceur, aucune mesure d'audience, et
+aucune police servie par un tiers. La carte Google ne se charge qu'après un clic
+explicite du visiteur. Les seules requêtes sortantes possibles sont les liens
+que le visiteur choisit de suivre (réservation, avis, réseaux sociaux).
 
 **Conversion.** Bouton « Réserver » permanent, barre d'action fixe sur mobile
 (appeler / réserver), pastille « ouvert / fermé » calculée en direct depuis les
@@ -148,6 +181,7 @@ absence, ces commandes couvrent l'essentiel :
 grep -c 'data-fill' tarifs.html                    # montants restants
 grep -L 'canonical' *.html                         # pages sans canonical
 grep -c '<h1' *.html                               # doit valoir 1 partout
+grep -rn 'fonts.googleapis\|fonts.gstatic' .       # doit ne rien renvoyer
 ```
 
 Après mise en ligne : passer les pages dans le test des résultats enrichis de
