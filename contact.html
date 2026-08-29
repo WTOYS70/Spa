@@ -28,7 +28,7 @@
   <!-- Polices auto-hébergées : aucune requête vers un service tiers. -->
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/manrope-variable.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/cormorant-garamond-400.woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.min.css">
 
   <!-- Thème appliqué avant peinture : évite le clignotement au chargement -->
   <script>(function(){var d=document.documentElement;
@@ -99,7 +99,7 @@ setTimeout(function(){if(!d.hasAttribute('data-js-ok'))d.className=d.className.r
       </dl>
 
       <h3 class="mt-3" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-        Horaires <span class="openstate" data-openstate><i aria-hidden="true"></i><span>Horaires</span></span>
+        Horaires <span class="openstate" data-openstate data-schedule="1:15:00-19:30;2,3,4,5:10:00-19:00;6:09:00-19:00;0:"><i aria-hidden="true"></i><span>Horaires</span></span>
       </h3>
       <dl class="hours mt-1" data-hours><div class="hours__row" data-day="1" data-range="15:00-19:30"><dt>Lundi</dt><dd>15h00 – 19h30</dd></div><div class="hours__row" data-day="2,3,4,5" data-range="10:00-19:00"><dt>Mardi au vendredi</dt><dd>10h00 – 19h00</dd></div><div class="hours__row" data-day="6" data-range="09:00-19:00"><dt>Samedi</dt><dd>09h00 – 19h00</dd></div><div class="hours__row hours__row--closed" data-day="0" data-range=""><dt>Dimanche</dt><dd>Fermé</dd></div></dl>
       <p class="fine mt-1">Le jour en cours apparaît en surbrillance. Les jours fériés peuvent modifier ces horaires&nbsp;: appelez-nous en cas de doute.</p>
@@ -224,6 +224,6 @@ setTimeout(function(){if(!d.hasAttribute('data-js-ok'))d.className=d.className.r
 
 <button class="totop" type="button" aria-label="Revenir en haut de la page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6 12l6-6 6 6"/></svg></button>
 
-<script src="assets/js/main.js" defer></script>
+<script src="assets/js/main.min.js" defer></script>
 </body>
 </html>

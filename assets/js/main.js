@@ -235,35 +235,44 @@
     });
   });
 
-  /* --- 11. Horaires : jour courant + état ouvert/fermé en direct ---------- */
-  const hoursEl = $('[data-hours]');
-  if (hoursEl) {
-    const now  = new Date();
-    const day  = now.getDay();                       // 0 = dimanche
-    const mins = now.getHours() * 60 + now.getMinutes();
-    let openNow = false, nextInfo = '';
+  /* --- 11. Horaires : état ouvert/fermé en direct ------------------------
+     Le calendrier voyage dans l'attribut data-schedule de la pastille, si bien
+     que le calcul fonctionne sur toutes les pages. Le tableau des horaires,
+     lui, n'existe que sur la page contact : il ne sert qu'au surlignage. */
+  const now  = new Date();
+  const today = now.getDay();                      // 0 = dimanche
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 
-    $$('[data-day]', hoursEl).forEach((row) => {
-      const days = row.dataset.day.split(',').map(Number);
-      if (!days.includes(day)) return;
-      row.setAttribute('data-today', '');
-      const range = row.dataset.range;               // « 10:00-19:00 » ou vide si fermé
-      if (!range) return;
-      const [a, b] = range.split('-');
-      const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
-      const start = toMin(a), end = toMin(b);
-      if (mins >= start && mins < end) { openNow = true; nextInfo = `jusqu'à ${a === b ? '' : b.replace(':', 'h')}`; }
-      else if (mins < start) nextInfo = `ouvre à ${a.replace(':', 'h')}`;
+  const badges = $$('[data-openstate]');
+  if (badges.length) {
+    let openNow = false, info = '';
+    (badges[0].dataset.schedule || '').split(';').forEach((part) => {
+      const cut = part.indexOf(':');
+      if (cut < 0) return;
+      const days  = part.slice(0, cut).split(',').map(Number);
+      const range = part.slice(cut + 1);
+      if (!days.includes(today) || !range) return;
+      const [from, to] = range.split('-');
+      if (mins >= toMin(from) && mins < toMin(to)) {
+        openNow = true; info = "jusqu'à " + to.replace(':', 'h');
+      } else if (mins < toMin(from)) {
+        info = 'ouvre à ' + from.replace(':', 'h');
+      }
     });
-
-    $$('[data-openstate]').forEach((el) => {
+    badges.forEach((el) => {
       el.classList.add(openNow ? 'is-open' : 'is-closed');
       const label = el.querySelector('span');
       if (label) label.textContent = openNow
-        ? `Ouvert maintenant${nextInfo ? ' · ' + nextInfo : ''}`
-        : (nextInfo ? `Fermé · ${nextInfo}` : 'Fermé actuellement');
+        ? 'Ouvert' + (info ? ' · ' + info : '')
+        : (info ? 'Fermé · ' + info : 'Fermé aujourd\'hui');
     });
   }
+
+  // Surlignage du jour courant, là où le tableau des horaires est affiché.
+  $$('[data-hours] [data-day]').forEach((row) => {
+    if (row.dataset.day.split(',').map(Number).includes(today)) row.setAttribute('data-today', '');
+  });
 
   /* --- 12. Carte chargée à la demande (aucun cookie tiers avant clic) ----- */
   $$('[data-map]').forEach((box) => {

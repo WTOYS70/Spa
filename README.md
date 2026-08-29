@@ -60,10 +60,13 @@ contact.html               Coordonnées, horaires, plan, formulaire
 mentions-legales.html      Mentions légales et confidentialité
 404.html                   Page d'erreur
 
-assets/css/style.css       Feuille de style unique (~49 Ko)
-assets/js/main.js          Interactions (~14 Ko)
+assets/css/style.css       Feuille de style — SOURCE, c'est ici qu'on modifie
+assets/css/style.min.css   Version servie au visiteur — générée, ne pas éditer
+assets/js/main.js          Interactions — SOURCE
+assets/js/main.min.js      Version servie au visiteur — générée, ne pas éditer
 assets/img/                Logo, favicon, illustrations SVG, image de partage
 assets/fonts/              Polices auto-hébergées + licences SIL OFL (~71 Ko)
+minify.sh                  Régénère les deux fichiers .min
 
 robots.txt  sitemap.xml  site.webmanifest
 ```
@@ -75,6 +78,21 @@ chaque fichier. Une modification de menu se répercute donc à la main sur les
 ---
 
 ## Personnaliser
+
+### ⚠️ Toute modification de CSS ou de JS demande une étape
+
+Les pages chargent `style.min.css` et `main.min.js`. Modifier les fichiers
+sources ne change donc **rien** tant qu'on n'a pas régénéré :
+
+```bash
+./minify.sh
+```
+
+C'est la seule commande à retenir. Elle a besoin de Node.js ; esbuild est
+téléchargé à la volée, il n'y a rien à installer ni à versionner.
+
+Si un changement de style ne s'affiche pas, la cause est presque toujours
+là : le `.min` n'a pas été régénéré.
 
 ### Couleurs, ombres, rythme
 
@@ -144,10 +162,11 @@ le navigateur la synthétisera.
 ## Ce qui a été mis en place
 
 **Performance.** Aucune bibliothèque externe, aucune requête vers un domaine
-tiers. Chemin critique du premier affichage : **≈ 139 Ko non compressés**, soit
-environ 60 Ko une fois servis en gzip ou brotli (les `.woff2` sont déjà
-compressés). Le CSS est chargé en bloquant (49 Ko), les polices préchargées
-depuis le même domaine, le JavaScript en `defer`. Les images sont des SVG
+tiers. CSS et JavaScript sont minifiés avec esbuild : 48,7 → 41,5 Ko pour la
+feuille de style, 14,4 → 8,0 Ko pour le script, soit **45 % de moins sur le JS**.
+Chemin critique du premier affichage : **≈ 125 Ko non compressés**, autour de
+55 Ko une fois servis en gzip ou brotli (les `.woff2` sont déjà compressés).
+Les polices sont préchargées depuis le même domaine, le JavaScript est en `defer`. Les images sont des SVG
 inline-friendly. L'animation de vapeur s'arrête dès que le héros sort de l'écran
 ou que l'onglet passe en arrière-plan.
 
@@ -182,6 +201,7 @@ grep -c 'data-fill' tarifs.html                    # montants restants
 grep -L 'canonical' *.html                         # pages sans canonical
 grep -c '<h1' *.html                               # doit valoir 1 partout
 grep -rn 'fonts.googleapis\|fonts.gstatic' .       # doit ne rien renvoyer
+./minify.sh                                        # après toute retouche CSS/JS
 ```
 
 Après mise en ligne : passer les pages dans le test des résultats enrichis de
