@@ -1,0 +1,6 @@
+# Le Paradis du Spa — https://www.paradisduspa.fr
+User-agent: *
+Allow: /
+Disallow: /mentions-legales.html
+
+Sitemap: https://www.paradisduspa.fr/sitemap.xml

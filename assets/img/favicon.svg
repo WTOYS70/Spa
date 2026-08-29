@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Le Paradis du Spa">
+  <defs>
+    <linearGradient id="gb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0dcb4"/><stop offset="1" stop-color="#d8b475"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#171310"/>
+  <g fill="none" stroke="url(#gb)" stroke-width="3" stroke-linecap="round">
+    <path d="M20 41c0-7 8-7 8-14s-6-8-6-8"/>
+    <path d="M32 44c0-9 9-9 9-17s-7-10-7-10" opacity=".82"/>
+    <path d="M44 41c0-7 7-7 7-13s-5-8-5-8" opacity=".6"/>
+  </g>
+  <path d="M12 47h40c0 6-9 9-20 9s-20-3-20-9z" fill="url(#gb)" opacity=".95"/>
+  <circle cx="32" cy="12" r="2.6" fill="#fff"/>
+</svg>
